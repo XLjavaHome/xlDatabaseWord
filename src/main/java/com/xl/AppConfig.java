@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * To change this template use File | Settings | File Templates.
  */
 @ComponentScan(basePackages = {"com.xl"})
-public class MainConfig {
+public class AppConfig {
     @Bean
     public JdbcTemplate getJdbcTemplate(DataSource dataSource) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);

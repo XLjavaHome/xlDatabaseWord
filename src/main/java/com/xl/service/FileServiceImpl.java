@@ -32,7 +32,7 @@ public class FileServiceImpl implements FileService {
             return;
         }
         XWPFDocument doc = new XWPFDocument();
-        for (TableInfo columnInfo : columnInfoList) {//表名  说明
+        for (TableInfo columnInfo : columnInfoList) {
             XWPFParagraph docParagraph = doc.createParagraph();
             XWPFRun xwpfRun = docParagraph.createRun();
             xwpfRun.setText(MessageFormat.format("{0}  ", columnInfo.getTable_name()));

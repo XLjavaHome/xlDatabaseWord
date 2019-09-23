@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class Main {
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MainConfig.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
         FileService fileService = context.getBean(FileService.class);
         List<Map<String, Object>> mapList = jdbcTemplate.queryForList(

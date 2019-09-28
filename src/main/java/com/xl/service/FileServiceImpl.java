@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.*;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.poi.xwpf.usermodel.*;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Created with 徐立.
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
  * @time 23:30
  * To change this template use File | Settings | File Templates.
  */
-@Component
+@Service
 public class FileServiceImpl implements FileService {
     @Override
     public void generateWordDocument(Collection<TableInfo> columnInfoList) {

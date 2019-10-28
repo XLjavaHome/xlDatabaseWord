@@ -10,7 +10,11 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.stereotype.Service;
@@ -73,31 +77,27 @@ public class FileServiceImpl implements FileService {
     
     @Override
     public Map<String, TableInfo> dealWithData(List<Map<String, Object>> mapList) {
-        Map<String, TableInfo> tableInfoListMap = new TreeMap<>();
-        for (Map<String, Object> map : mapList) {
-            //1.获取数据库中的字段
-            String table_name = MapUtils.getString(map, "table_name");
-            if (table_name == null) {
-                continue;
-            }
-            String table_comment = MapUtils.getString(map, "table_comment");
-            String column_name = MapUtils.getString(map, "column_name");
-            String column_type = MapUtils.getString(map, "column_type");
-            String column_comment = MapUtils.getString(map, "column_comment");
-            //2。封装实体
-            TableInfo tableInfo = tableInfoListMap.get(table_name);
-            if (tableInfo == null) {
-                tableInfo = new TableInfo(table_name, table_comment);
-            }
-            List<ColumnInfo> infoColumnInfos = tableInfo.getColumnInfos();
-            if (infoColumnInfos == null) {
-                infoColumnInfos = new ArrayList<>(50);
-                tableInfo.setColumnInfos(infoColumnInfos);
-            }
-            ColumnInfo infoColumnInfo = new ColumnInfo(column_name, column_type, column_comment);
-            infoColumnInfos.add(infoColumnInfo);
-            tableInfoListMap.put(table_name, tableInfo);
-        }
-        return tableInfoListMap;
+        Map<String, TableInfo> result = mapList.stream().collect(
+                Collectors.toMap(map -> MapUtils.getString(map, "table_name"), map -> {
+                    String table_name = MapUtils.getString(map, "table_name");
+                    String table_comment = MapUtils.getString(map, "table_comment");
+                    String column_name = MapUtils.getString(map, "column_name");
+                    String column_type = MapUtils.getString(map, "column_type");
+                    String column_comment = MapUtils.getString(map, "column_comment");
+                    //2。封装实体
+                    TableInfo tableInfo = new TableInfo(table_name, table_comment);
+                    List<ColumnInfo> infoColumnInfos = tableInfo.getColumnInfos();
+                    if (infoColumnInfos == null) {
+                        infoColumnInfos = new ArrayList<>(50);
+                        tableInfo.setColumnInfos(infoColumnInfos);
+                    }
+                    ColumnInfo infoColumnInfo = new ColumnInfo(column_name, column_type, column_comment);
+                    infoColumnInfos.add(infoColumnInfo);
+                    return tableInfo;
+                }, (oldValue, newValue) -> {
+                    newValue.getColumnInfos().addAll(oldValue.getColumnInfos());
+                    return newValue;
+                }));
+        return result;
     }
 }

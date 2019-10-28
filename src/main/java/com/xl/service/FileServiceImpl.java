@@ -49,7 +49,8 @@ public class FileServiceImpl implements FileService {
             }
             doc.createParagraph();
         }
-        File file = new File(MessageFormat.format("target/数据库字典{0}.doc", LocalDate.now().toString()));
+        File file = new File(MessageFormat.format("target/数据库字典{0}{1}.doc", LocalDate.now().toString(),
+                                                  String.valueOf(System.nanoTime()).substring(0, 4)));
         try {
             doc.write(new BufferedOutputStream(new FileOutputStream(file)));
             doc.close();

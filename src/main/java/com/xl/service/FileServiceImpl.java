@@ -10,10 +10,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.poi.xwpf.usermodel.*;
@@ -86,11 +83,9 @@ public class FileServiceImpl implements FileService {
                     String column_comment = MapUtils.getString(map, "column_comment");
                     //2。封装实体
                     TableInfo tableInfo = new TableInfo(table_name, table_comment);
-                    List<ColumnInfo> infoColumnInfos = tableInfo.getColumnInfos();
-                    if (infoColumnInfos == null) {
-                        infoColumnInfos = new ArrayList<>(50);
-                        tableInfo.setColumnInfos(infoColumnInfos);
-                    }
+                    List<ColumnInfo> infoColumnInfos = Optional.ofNullable(tableInfo.getColumnInfos()).orElse(
+                            new ArrayList<>(50));
+                    tableInfo.setColumnInfos(infoColumnInfos);
                     ColumnInfo infoColumnInfo = new ColumnInfo(column_name, column_type, column_comment);
                     infoColumnInfos.add(infoColumnInfo);
                     return tableInfo;

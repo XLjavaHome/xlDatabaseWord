@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.poi.xwpf.usermodel.*;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
  * To change this template use File | Settings | File Templates.
  */
 @Service
+@EnableCaching
 public class FileServiceImpl implements FileService {
     @Override
     public void generateWordDocument(Collection<TableInfo> columnInfoList) {
@@ -73,8 +76,10 @@ public class FileServiceImpl implements FileService {
         cell.getCTTc().addNewTcPr().addNewTcW().setW(new BigInteger("3000"));
     }
     
+    @Cacheable(cacheNames = "tableInfo", key = "targetClass")
     @Override
     public Map<String, TableInfo> dealWithData(List<Map<String, Object>> mapList) {
+        System.out.println("进来了，没有缓存");
         Map<String, TableInfo> result = mapList.stream().collect(
                 Collectors.toMap(map -> MapUtils.getString(map, "table_name"), map -> {
                     String table_name = MapUtils.getString(map, "table_name");

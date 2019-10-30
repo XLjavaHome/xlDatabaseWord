@@ -1,6 +1,9 @@
 package com.xl;
 
 import javax.sql.DataSource;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
@@ -17,10 +20,23 @@ import org.xl.ImportTest;
  */
 @ComponentScan(basePackages = {"com.xl"})
 @Import(ImportTest.class)
+@Cacheable
 public class AppConfig {
     @Bean
     public JdbcTemplate getJdbcTemplate(DataSource dataSource) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         return jdbcTemplate;
+    }
+    
+    /**
+     * springCache缓存
+     *
+     * @return
+     */
+    @Bean
+    public CacheManager getSimpleCacheManager() {
+        //用SimpleCacheManager报错。
+        ConcurrentMapCacheManager simpleCacheManager = new org.springframework.cache.concurrent.ConcurrentMapCacheManager();
+        return simpleCacheManager;
     }
 }

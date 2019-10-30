@@ -28,6 +28,8 @@ public class Main {
                 + "order by b.table_name, b.ordinal_position ", "xl");
         //key 表的名称，表    TableInfo 里放属性
         Map<String, TableInfo> tableInfoListMap = fileService.dealWithData(mapList);
+        tableInfoListMap = fileService.dealWithData(mapList);
+        tableInfoListMap = fileService.dealWithData(mapList);
         Collection<TableInfo> values = tableInfoListMap.values();
         fileService.generateWordDocument(values);
     }

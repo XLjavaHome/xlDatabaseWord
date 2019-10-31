@@ -79,7 +79,6 @@ public class FileServiceImpl implements FileService {
     @Cacheable(cacheNames = "tableInfo", key = "targetClass")
     @Override
     public Map<String, TableInfo> dealWithData(List<Map<String, Object>> mapList) {
-        System.out.println("进来了，没有缓存");
         Map<String, TableInfo> result = mapList.stream().collect(
                 Collectors.toMap(map -> MapUtils.getString(map, "table_name"), map -> {
                     String table_name = MapUtils.getString(map, "table_name");

@@ -9,7 +9,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.MessageFormat;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.MapUtils;
@@ -35,29 +36,27 @@ public class FileServiceImpl implements FileService {
         if (columnInfoList.isEmpty()) {
             return;
         }
-        XWPFDocument doc = new XWPFDocument();
-        for (TableInfo columnInfo : columnInfoList) {
-            XWPFParagraph docParagraph = doc.createParagraph();
-            XWPFRun xwpfRun = docParagraph.createRun();
-            xwpfRun.setText(MessageFormat.format("{0}  ", columnInfo.getTable_name()));
-            List<ColumnInfo> columnInfos = columnInfo.getColumnInfos();
-            XWPFTable wordTable = doc.createTable(columnInfos.size(), 3);
-            for (int i = 0; i < columnInfos.size(); i++) {
-                ColumnInfo info = columnInfos.get(i);
-                XWPFTableRow row = wordTable.getRow(i);
-                row.setHeight(30);
-                setTextAndStyle(row, 0, info.getColumn_name());
-                setTextAndStyle(row, 1, info.getColumn_type());
-                setTextAndStyle(row, 2, info.getColumn_comment());
+        try (XWPFDocument doc = new XWPFDocument()) {
+            for (TableInfo columnInfo : columnInfoList) {
+                XWPFParagraph docParagraph = doc.createParagraph();
+                XWPFRun xwpfRun = docParagraph.createRun();
+                xwpfRun.setText(MessageFormat.format("{0}  ", columnInfo.getTable_name()));
+                List<ColumnInfo> columnInfos = columnInfo.getColumnInfos();
+                XWPFTable wordTable = doc.createTable(columnInfos.size(), 3);
+                for (int i = 0; i < columnInfos.size(); i++) {
+                    ColumnInfo info = columnInfos.get(i);
+                    XWPFTableRow row = wordTable.getRow(i);
+                    row.setHeight(30);
+                    setTextAndStyle(row, 0, info.getColumn_name());
+                    setTextAndStyle(row, 1, info.getColumn_type());
+                    setTextAndStyle(row, 2, info.getColumn_comment());
+                }
+                doc.createParagraph();
             }
-            doc.createParagraph();
-        }
-        File file = new File(MessageFormat.format("target/数据库字典{0}{1}.doc", LocalDate.now().toString(),
-                                                  String.valueOf(System.nanoTime()).substring(0, 4)));
-        try {
+            File file = new File(MessageFormat.format("target/数据库字典{0}{1}.doc",
+                                                      DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now())));
             doc.write(new BufferedOutputStream(new FileOutputStream(file)));
-            doc.close();
-            Desktop.getDesktop().open(file);
+            Desktop.getDesktop().open(file.getParentFile());
         } catch (IOException e) {
             e.printStackTrace();
         }
